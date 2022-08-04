@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<h1 style="text-align:center;">Order me around!</h1>
+<center><canvas id="myCan" width="600" height="600" onclick = "processInput(event)"></canvas></center>
+
+<script>
+var can = document.getElementById("myCan");
+var canTX = can.getContext("2d");
+
+class soldier {
+	constructor(startX,startY,speed)
+	{
+		this.posX = startX;
+		this.posY = startY;
+		this.speed = speed;
+		this.destX = this.posX;
+		this.destY = this.posY;
+
+	}
+	draw(drawOn)
+	{
+		drawOn.beginPath();
+		drawOn.arc(this.posX,this.posY,20,0,2*Math.PI);
+		drawOn.stroke();
+	}
+	changeDest(event)
+	{
+		var rect = can.getBoundingClientRect();
+
+		this.destX = event.clientX-rect.left;
+		this.destY = event.clientY-rect.top;
+	}
+	step()
+	{
+		var dist = Math.sqrt((this.destX-this.posX)**2+(this.destY-this.posY)**2)
+		if(dist <= this.speed)
+		{
+			this.posX = this.destX;
+			this.posY = this.destY;
+		}
+		else
+		{
+			var foundAng = Math.asin((this.destY-this.posY)/dist)
+			if(this.destX > this.posX)
+			{
+				this.posX += Math.cos(foundAng)*this.speed 				
+			}
+			else
+			{
+				this.posX -= Math.cos(foundAng)*this.speed 				
+			}
+			this.posY += Math.sin(foundAng)*this.speed			
+		}
+
+	}
+
+}
+
+
+
+mySold = new soldier(300,300,3)
+
+
+
+function mainLoop()
+{
+	canTX.clearRect(0, 0, can.width, can.height);
+	mySold.step()
+	mySold.draw(canTX)
+}
+
+function processInput(event)
+{
+	mySold.changeDest(event);
+}
+
+
+
+setInterval(mainLoop,15)
+
+</script>
+
+<html>
